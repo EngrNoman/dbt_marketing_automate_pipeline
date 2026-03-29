@@ -2,9 +2,8 @@ name: dbt_daily_build
 
 on:
   schedule:
-    # Rozana raat 2 baje (UTC) chalay ga
     - cron: '0 2 * * *'
-  workflow_dispatch: # Is se aap manually button daba kar run kar saktay hain
+  workflow_dispatch: 
 
 jobs:
   dbt_run:
@@ -12,10 +11,12 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        # v3 se v4 par upgrade kiya (Warning fix)
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        # v4 se v5 par upgrade kiya (Warning fix)
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
 
@@ -24,11 +25,14 @@ jobs:
           pip install dbt-bigquery
 
       - name: Create GCP Key File
-        # Ye step GitHub Secret se key nikal kar file banaye ga
         run: |
           echo "${{ secrets.GCP_SA_KEY }}" > ./google_key.json
 
+      - name: Debug dbt Connection
+        # Ye step check karega ke dbt ko profile mil rahi hai ya nahi
+        run: |
+          dbt debug --profiles-dir . --target prod
+
       - name: Run dbt Build
         run: |
-          # --profiles-dir . ka matlab hai ke profiles.yml isi folder mein hai
           dbt build --profiles-dir . --target prod
