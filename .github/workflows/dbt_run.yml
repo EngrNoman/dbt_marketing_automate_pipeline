@@ -22,11 +22,13 @@ jobs:
 
       - name: Install dbt
         run: |
-          pip install dbt-bigquery
+          pip install dbt-core dbt-bigquery
 
       - name: Create GCP Key File
         run: |
-          echo "${{ secrets.GCP_SA_KEY }}" > ./google_key.json
+          cat <<EOF > ./google_key.json
+          ${{ secrets.GCP_SA_KEY }}
+          EOF
 
       - name: Debug dbt Connection
         # Ye step check karega ke dbt ko profile mil rahi hai ya nahi
