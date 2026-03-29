@@ -1,0 +1,43 @@
+# # profiles.yml
+
+# marketing_dbt_pipeline: # Is naam ko dbt_project.yml ki 'profile' line se match hona chahiye
+#   target: dev
+#   outputs:
+#     dev:
+#       type: bigquery
+#       method: service-account
+
+#       # 1. Aapka Google Cloud Project ID (e.g., emerald-radius-12345)
+#       project: marketing-dbt-pipeline
+
+#       # 2. Ye wo dataset hai jahan dbt models save honge (e.g., dbt_analytics)
+#       # Yaad rahe: Ye dbt khud bana lega, aapko BigQuery mein banane ki zaroorat nahi.
+#       dataset: dbt_analytics
+
+#       threads: 4
+
+#       # 3. Docker container ke andar ka path (Isey mat badaliye ga)
+#       keyfile: /usr/app/key.json
+
+#       # 4. Jo location aapne BigQuery mein dataset banate waqt select ki (e.g., US)
+#       location: US
+
+#       priority: interactive
+#       retries: 1
+
+
+
+marketing_dbt_pipeline:
+  target: prod  # GHA ko hum hamesha 'prod' target dete hain
+  outputs:
+    prod:
+      type: bigquery
+      method: service-account
+      project: marketing-dbt-pipeline
+      dataset: dbt_analytics
+      threads: 4
+      # GHA mein hum keyfile yahin create karte hain (Current Directory)
+      keyfile: ./google_key.json 
+      location: US
+      priority: interactive
+      retries: 1
