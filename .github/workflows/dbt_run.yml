@@ -2,8 +2,8 @@ name: dbt_daily_build
 
 on:
   schedule:
-    - cron: '0 2 * * *'
-  workflow_dispatch: 
+    - cron: "0 2 * * *"
+  workflow_dispatch:
 
 jobs:
   dbt_run:
@@ -18,7 +18,7 @@ jobs:
         # v4 se v5 par upgrade kiya (Warning fix)
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: "3.9"
 
       - name: Install dbt
         run: |
@@ -29,6 +29,10 @@ jobs:
           cat <<EOF > ./google_key.json
           ${{ secrets.GCP_SA_KEY }}
           EOF
+
+      - name: Install dbt Packages # <--- YE STEP ZAROORI HAI
+        run: |
+          dbt deps --profiles-dir .
 
       - name: Debug dbt Connection
         # Ye step check karega ke dbt ko profile mil rahi hai ya nahi
