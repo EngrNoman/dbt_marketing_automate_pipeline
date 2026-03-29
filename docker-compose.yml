@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  dbt-tool:
+    build: .          # Ye line aapki Dockerfile ko dhoond kar image banayegi
+    container_name: dbt_container
+    entrypoint: ["tail", "-f", "/dev/null"]
+    volumes:
+      - .:/usr/app    # Aapka local code aur container sync rahenge
+      - ./gckey.json:/usr/app/key.json:ro # Bahar se key attach karein
+    ports:
+      - "8080:8080"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/usr/app/key.json
+    stdin_open: true
+    tty: true

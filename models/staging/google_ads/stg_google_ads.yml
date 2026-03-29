@@ -1,0 +1,21 @@
+version: 2
+
+models:
+  - name: google_ads__logs
+    description: "Flattened aur cleaned Google Ads performance data."
+    columns:
+      - name: account_id
+        description: "Unique identifier for each ad."
+        tests:
+          - not_null
+
+      - name: spend
+        description: "Ad par kiya gaya kharcha (PKR mein, micros se convert kiya hua)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0 # Engineer's Rule: Kharcha kabhi negative nahi ho sakta!
+
+      - name: clicks
+        description: "Total clicks on the ad."
+        tests:
+          - not_null

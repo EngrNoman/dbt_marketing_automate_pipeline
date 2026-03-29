@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: meta_ads__logs
+    description: "Meta Ads ka flattened data jahan har row ek individual campaign ki performance dikhati hai."
+    columns:
+      - name: account_id
+        description: "Meta Ad Account ka Unique ID (act_...). "
+        tests:
+          - not_null
+
+      - name: campaign_name
+        description: "Meta campaign ka naam."
+        tests:
+          - not_null
+
+      - name: spend
+        description: "Campaign par kiya gaya total kharcha (Direct currency format mein)."
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+      - name: platform
+        description: "Source identify karne ke liye hardcoded value (Meta)."
+        tests:
+          - accepted_values:
+              values: ["Meta"]

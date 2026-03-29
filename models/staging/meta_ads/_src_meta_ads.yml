@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: meta_ads_raw          # dbt nickname for Meta
+    database: marketing-dbt-pipeline  # Apna BigQuery Project ID likhein
+    schema: api_raw_data            # Dataset ka naam
+    
+    tables:
+      - name: meta_ads_logs          # Asal table ka naam jo BigQuery mein hai
+        description: "Meta (Facebook/Instagram) ads performance raw data."
+        columns:
+          - name: ad_account_id
+            tests:
+              - not_null

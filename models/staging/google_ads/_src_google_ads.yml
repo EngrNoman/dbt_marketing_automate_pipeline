@@ -1,0 +1,21 @@
+version: 2
+
+sources:
+  - name: google_ads_raw
+    database: marketing-dbt-pipeline
+    schema: api_raw_data
+    description: "Google Ads API se aane wala raw marketing data."
+    
+    tables:
+      - name: google_ads_log
+        description: "Ad performance data jisme campaign aur metrics ki daily details hain."
+        columns:
+          - name: customer.id
+            description: "Google Ads Account ka unique ID."
+            tests:
+              - not_null  # Check karega ke koi row bina account ID ke toh nahi
+              
+          - name: segments.date
+            description: "Jis din ka data report ho raha hai."
+            tests:
+              - not_null

@@ -1,0 +1,33 @@
+# dbt_project.yml
+
+name: "marketing_dbt_pipeline_docs" # Aapke project ka naam (kuch bhi rakh dein)
+version: "1.0.0"
+config-version: 2
+
+# YE LINE SAB SE ZAROORI HAI:
+# Iska naam 'profiles.yml' mein di gayi profile ke naam se match hona chahiye
+profile: "marketing_dbt_pipeline"
+
+# Ye folders dbt khud use karta hai, inhein change karne ki zaroorat nahi
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target" # Yahan compiled SQL files jati hain
+clean-targets: # Jab 'dbt clean' chalayein to ye folders delete ho jayenge
+  - "target"
+  - "dbt_packages"
+
+# Models ki configuration
+models:
+  marketing_dbt_pipeline_docs:
+    # Yahan aap models ke default settings set kar sakte hain
+    staging:
+      +materialized: view # Default mein dbt tables ki jagah Views banayega
+    intermediate:
+      +materialized: view # Intermediate models bhi tables honge
+    marts:
+      +materialized: table # Marts ke models tables honge

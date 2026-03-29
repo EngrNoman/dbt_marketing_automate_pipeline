@@ -1,0 +1,111 @@
+Yeh aik bohot common aur important requirement hai, kyunki jab aapke project mein 100 models ho jayenge, toh aap har baar saare models nahi chalana chahenge.
+
+dbt mein kisi aik specific file ya model ko chalane ke liye hum **`--select`** flag (ya sirf **`-s`**) use karte hain.
+
+---
+
+### 1. Single Model Chalane ki Command
+
+Agar aapki file ka naam `stg_customers.sql` hai, toh aap ye command chalayenge:
+
+```bash
+docker exec -it dbt_container dbt run --select stg_customers
+```
+
+_(Note: `.sql` extension likhne ki zaroorat nahi hoti, sirf file ka naam kaafi hai)._
+
+---
+
+### 2. Useful Variations (Pro Tips)
+
+Dbt mein select karne ke kuch aur zabardast tareeqe bhi hain:
+
+- **Model aur uske aglay (Downstream) models:**
+  Agar aap chahte hain ke `stg_customers` chale aur us par depend karne wale saare aglay models bhi chal jayen:
+  `dbt run --select stg_customers+` (Aakhir mein **+** lagayein).
+
+- **Model aur uske pichly (Upstream) models:**
+  Agar aap chahte hain ke model chale aur wo jin sources se data le raha hai wo bhi process hon:
+  `dbt run --select +stg_customers` (Shuru mein **+** lagayein).
+
+- **Pura Folder Chalana:**
+  Agar aapne models ko folders mein rakha hai (maslan `models/marts/`), toh aap pura folder bhi chala sakte hain:
+  `dbt run --select marts`
+
+---
+
+### 3. Sirf Test Chalana
+
+Agar aapne us specific model ke liye tests likhe hain aur sirf unhein check karna chahte hain:
+`docker exec -it dbt_container dbt test --select stg_customers`
+
+---
+
+### Ek Engineer ki Tip:
+
+Jab aap development kar rahe hote hain, toh `dbt run --select <model_name>` aapka sab se zyada use hone wala tool hai. Is se aapka waqt bhi bachta hai aur BigQuery ke "Query Costs" bhi kam aate hain kyunki aap faltu data process nahi kar rahe hote.
+
+**Kya aapne apna pehla model file (`.sql`) bana liya hai?** Agar haan, toh usay `run --select` ke sath chala kar dekhein aur BigQuery mein ja kar check karein ke naya table bana ya nahi! Would you like me to help you verify the table in BigQuery?
+
+Haan, ye command **bilkul sahi** kaam karegi!
+
+Dbt ek bohot hi smart engine hai. Aapko pura path (`models/staging/...`) likhne ki zaroorat nahi hoti. Dbt sirf **file ka naam** (model name) dekhta hai.
+
+Jab aap `--select stg_google_ads__performance` likhte hain, to dbt pure `models/` folder mein scan karta hai aur jahan bhi usay ye file milti hai, usay run kar deta hai.
+
+---
+
+### Ek Engineer ki Tarah "Selection" ke 3 Tareeqay:
+
+Agar aap chahte hain ke dbt sirf specific folders ya files chalaye, to ye commands aapke kaam ayengi:
+
+1.  **Sirf ek file (Jo aap kar rahe hain):**
+
+    ```bash
+    dbt run --select stg_google_ads__performance
+    ```
+
+2.  **Pura Folder (Google Ads ke saare models):**
+    Agar aapne 5-6 files banayi hain Google Ads ke folder mein:
+
+    ```bash
+    dbt run --select staging.google_ads
+    ```
+
+    _Dbt samajh jayega ke `staging` folder ke andar `google_ads` wale saare models chalane hain._
+
+3.  **The "Plus" Magic (Lineage Selection):**
+    Ye sab se zyada use hone wali command hai. Agar aap chahte hain ke staging model chale aur uske saath jo **Marts** ya **Intermediate** models us par depend karte hain wo bhi chalein:
+    ```bash
+    dbt run --select stg_google_ads__performance+
+    ```
+    _(Ye `+` sign ka matlab hai: "Is file ko chalao aur iske aage jitne bhi bachay (downstream models) hain, unhe bhi chalao")._
+
+---
+
+### Kya Run Successful Raha?
+
+Agar aapne command chala di hai, to terminal par aapko aisa kuch nazar aana chahiye:
+
+- **`1 of 1 START view model ...`**
+- **`1 of 1 OK created view model ... [SUCCESS in 2.34s]`**
+
+### Ek Choti si Check:
+
+Kyunke aap Docker mein hain, kabhi kabhi **File Sync** ka masla hota hai. Agar dbt kahe ke _"No models found matching..."_, to iska matlab hai ke aapne file laptop par to save kar li hai, lekin Docker container ko abhi tak wo file nazar nahi aa rahi (Volume mapping ka issue).
+
+**Kya aapka model "Success" dikha raha hai?** Agar haan, to ab hum is model mein **Testing** add karenge, kyunke bina test ke koi bhi data engineer "Real Client" ka kaam nahi sambhaal sakta.
+
+enter : docker exec -it dbt_container bash
+
+dbt test :docker exec dbt_container dbt debug
+dbt test --select google_ads__logs / dbt docs generate / dbt docs serve / dbt deps
+
+for source check : dbt parse
+
+dbt source freshness --select source:meta_ads_raw 
+(Ye check karega ke Meta ki table BigQuery mein mil rahi hai ya nahi).
+
+dbt run --select meta_ads__logs
+dbt run --select int_marketing__union_performance
+dbt build

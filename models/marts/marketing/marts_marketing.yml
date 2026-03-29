@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: fct_marketing_performance
+    description: "Daily performance metrics across all platforms with calculated KPIs."
+    columns:
+      - name: spend
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              min_value: 0
+      - name: cpc
+        description: "Cost Per Click (Spend/Clicks)."
+        tests:
+          - dbt_utils.accepted_range:
+              min_value: 0
+
+  - name: dim_campaigns
+    description: "Unique list of all campaigns from Google and Meta."
+    columns:
+      - name: campaign_name
+        tests:
+          - not_null
+          - unique # Dim table mein campaign repeat nahi hona chahiye (if grain is unique campaign)
+
+  - name: marketing_report_final
+    description: "The 'One Big Table' used for BI Dashboards."
+    tests:
+      - dbt_utils.equal_rowcount:
+          compare_model: ref('fct_marketing_performance')

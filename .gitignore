@@ -1,0 +1,13 @@
+# .gitignore file ke andar
+gcKey.json
+logs/
+target/
+
+# dbt artifacts
+target/
+dbt_packages/
+logs/
+
+# Secrets (Bohat Zaroori!)
+*.json
+profiles.yml
