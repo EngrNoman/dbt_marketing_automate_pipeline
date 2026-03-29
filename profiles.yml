@@ -25,10 +25,8 @@
 #       priority: interactive
 #       retries: 1
 
-
-
-marketing_dbt_pipeline:
-  target: prod  # GHA ko hum hamesha 'prod' target dete hain
+marketing_dbt_pipeline: # Is naam ko dbt_project.yml ki 'profile' line se match hona chahiye
+  target: prod # GHA ko hum hamesha 'prod' target dete hain
   outputs:
     prod:
       type: bigquery
@@ -37,7 +35,7 @@ marketing_dbt_pipeline:
       dataset: dbt_analytics
       threads: 4
       # GHA mein hum keyfile yahin create karte hain (Current Directory)
-      keyfile: ./google_key.json 
+      keyfile: ./google_key.json
       location: US
       priority: interactive
       retries: 1
